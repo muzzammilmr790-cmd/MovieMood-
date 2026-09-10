@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Search from "./components/Search"
 import Spinner from "./components/Spinner"
 import MoiveCard from './components/MoiveCard';
+import MovieDetailModal from './components/MovieDetailModal';
 import { useDebounce } from 'react-use';
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
@@ -19,6 +20,7 @@ const App = () => {
   const [movieList, setMovieList]= useState([]);
   const [isLoading , setIsLoading] = useState (true);
   const [debouncedSearchTerm, setDebouncedSreachTrem]=useState('');
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
 
     useDebounce(() => setDebouncedSreachTrem(searchTerm), 500, [searchTerm]);
   const fetchMovies = async (query='') => {
@@ -68,13 +70,26 @@ const App = () => {
           ) : (
             <ul>
               {movieList.map((movie) => (
-                <MoiveCard key={movie.id} movie={movie} />
+                <MoiveCard 
+                  key={movie.id} 
+                  movie={movie} 
+                  onSelect={(id) => setSelectedMovieId(id)}
+                />
               ))}
             </ul>
           )}
           
-                  </section>
+        </section>
       </div>
+
+      {/* Movie Details Modal */}
+      {selectedMovieId && (
+        <MovieDetailModal 
+          movieId={selectedMovieId} 
+          onClose={() => setSelectedMovieId(null)} 
+          onSelectMovie={(id) => setSelectedMovieId(id)}
+        />
+      )}
 
     </main>
   )
